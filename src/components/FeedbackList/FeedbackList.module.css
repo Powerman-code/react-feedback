@@ -1,0 +1,17 @@
+.FeedbackList {
+  width: 600px;
+}
+
+.FeedbackList__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  border: 1px solid black;
+}
+
+.FeedbackList__text {
+  margin-top: 5px;
+  margin-bottom: 0px;
+  margin-right: 10px;
+}
