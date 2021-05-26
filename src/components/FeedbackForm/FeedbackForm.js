@@ -1,4 +1,6 @@
 import { Component } from 'react';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import s from './FeedbackForm.module.css';
 
 class FeedbackForm extends Component {
@@ -11,49 +13,44 @@ class FeedbackForm extends Component {
     console.log('C_DID_MOUNT');
 
     window.addEventListener('keydown', e => {
-      console.log(e.code);
+      console.log(e);
 
-      // function checkKey(e, form) {
-      // if (e.ctrlKey && e.keyCode == 13)
-      //     form.submit();
-      //   if (e.ctrlKey && (e.keyCode == 0xa || e.keyCode == 0xd)) {
-      //     console.log('Сработало');
-      //   }
-      //   if (e.code === 'Enter + ControlLeft') {
-      //     console.log('Сработало');
-      //   }
-      //   if (e.code === 'Enter' && e.code === 'ControlLeft') {
-      //     console.log('Сработало');
-      //   }
+      if (e.ctrlKey && e.code === 'Enter') {
+        console.log('win');
+
+        this.handleSubmit(e);
+      }
     });
   }
 
   handleChange = e => {
-    this.setState({ [e.currentTarget.name]: e.currentTarget.value });
-    console.log(e.currentTarget.value);
+    const { name, value } = e.currentTarget;
+    this.setState({ [name]: value });
+    console.log(value);
   };
 
   handleSubmit = e => {
+    console.log(e);
     e.preventDefault();
+
+    if (this.state.name.trim() === '') {
+      //   alert('Введите имя');
+      toast.warn('Введите имя');
+      return;
+    }
     console.log(this.state);
     this.props.onSubmit(this.state);
     this.resetText();
   };
 
   resetText = () => {
-    console.log('вызов ресет');
     this.setState({ text: '' });
   };
 
-  //      const reset = () => {
-  //     setInputValue('');
-  //   };
-
   render() {
     return (
-      <form className={s.FeedbackForm} onSubmit={this.handleSubmit}>
+      <form className={s.FeedbackForm} onSubmit={e => this.handleSubmit(e)}>
         <label>
-          Имя
           <input
             type="text"
             name="name"

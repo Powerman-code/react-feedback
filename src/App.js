@@ -1,26 +1,41 @@
 import { Component } from 'react';
-
+import { ToastContainer, toast } from 'react-toastify';
 import Container from './components/Container/Container';
 import FeedbackList from './components/FeedbackList/FeedbackList';
 import FeedbackForm from './components/FeedbackForm/FeedbackForm';
 import Filter from './components/Filter/Filter';
+import FeedbackPendingView from './views/FeedbackPendingView/FeedbackPendingView';
 
 import './App.css';
 
 class App extends Component {
   state = {
-    feedbacks: [
-      { id: 'id1', name: 'test1', text: 'some text1' },
-      { id: 'id2', name: 'test2', text: 'some text2' },
-      { id: 'id3', name: 'test3', text: 'some text3' },
-    ],
+    feedbacks: null,
     filter: '',
+    loading: false,
+    error: null,
   };
+
+  async componentDidMount() {
+    this.setState({ loading: true });
+    try {
+      await fetch('http://localhost:8080/api/feedback')
+        .then(res => res.json())
+        // .then(console.log);
+        .then(({ data }) => this.setState({ feedbacks: [...data] }));
+      // .catch(error => this.setState({ error })
+      // .finally(() => this.setState({ loading: false }));
+    } catch (error) {
+      if (error) {
+        this.setState({ error });
+      }
+    }
+  }
 
   addFeedback = ({ name, text }) => {
     console.log({ name, text });
     const feedback = {
-      name,
+      name: name.toLowerCase(),
       text,
     };
 
@@ -34,52 +49,61 @@ class App extends Component {
     this.setState({ filter: e.currentTarget.value });
   };
 
-  getVisibleFeedbacks = () => {
-    const { feedbacks, filter } = this.state;
+  // getVisibleFeedbacks = () => {
+  //   const { feedbacks, filter } = this.state;
 
-    const normalizedFilter = filter.toLowerCase();
+  //   const normalizedFilter = filter.toLowerCase();
 
-    return feedbacks.filter(feedback =>
-      feedback.text.toLowerCase().includes(normalizedFilter),
-    );
-  };
+  //   if (feedbacks) {
+  //     return feedbacks.filter(feedback =>
+  //       feedback.text.toLowerCase().includes(normalizedFilter),
+  //     );
+  //   }
+  // };
 
   render() {
-    const { feedbacks, filter } = this.state;
+    const { feedbacks, filter, loading, error } = this.state;
 
-    const visibleFeedbacks = this.getVisibleFeedbacks();
+    // const visibleFeedbacks = this.getVisibleFeedbacks();
+
+    //Вариант передачи ошибки с помощью react-toastify
+
+    // if (error) {
+    //   toast.error(`${error.message}`, {
+    //     position: 'top-center',
+    //     autoClose: false,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: false,
+    //     progress: undefined,
+    //   });
+    // }
 
     return (
       <Container>
+        {error && <h1>Произошла ошибка</h1>}
+        {loading && <FeedbackPendingView />}
         <div>
-          <p>Общее количество отзывов: {feedbacks.length}</p>
+          <p>Общее количество отзывов: {feedbacks?.length}</p>
         </div>
         <Filter value={filter} onChange={this.handleFilter} />
-        <FeedbackList feedbacks={visibleFeedbacks} />
+        {/* <FeedbackList feedbacks={visibleFeedbacks} /> */}
         <FeedbackForm onSubmit={this.addFeedback} />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </Container>
     );
   }
 }
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
 
 export default App;
