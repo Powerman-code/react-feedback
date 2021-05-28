@@ -13,9 +13,16 @@ async function fetchFeedbacks() {
     const response = await axios('http://localhost:8080/api/feedback');
     console.log(response);
 
+    // if (response.status === 200) {
+    //   console.log('OK');
+    //   const { data } = response.data;
+    //   console.log(data);
+    //   return data;
+    // }
+
     if (response.status === 200) {
       console.log('OK');
-      const { data } = response.data;
+      const { data } = response;
       console.log(data);
       return data;
     }

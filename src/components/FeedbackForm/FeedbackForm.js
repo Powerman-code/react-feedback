@@ -1,78 +1,91 @@
-import { Component } from 'react';
+import { Component, useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import s from './FeedbackForm.module.css';
 
-class FeedbackForm extends Component {
-  state = {
-    name: '',
-    text: '',
-  };
+function FeedbackForm({ onSubmit }) {
+  const [name, setName] = useState('');
+  const [text, setText] = useState('');
+  // state = {
+  //   name: '',
+  //   text: '',
+  // };
 
-  componentDidMount() {
-    console.log('C_DID_MOUNT');
+  // componentDidMount() {
+  //   console.log('C_DID_MOUNT');
 
-    window.addEventListener('keydown', e => {
-      console.log(e);
+  //   window.addEventListener('keydown', e => {
+  //     console.log(e);
 
-      if (e.ctrlKey && e.code === 'Enter') {
-        console.log('win');
+  //     if (e.ctrlKey && e.code === 'Enter') {
+  //       console.log('win');
 
-        this.handleSubmit(e);
-      }
-    });
-  }
+  //       this.handleSubmit(e);
+  //     }
+  //   });
+  // }
 
-  handleChange = e => {
+  const handleChange = e => {
     const { name, value } = e.currentTarget;
-    this.setState({ [name]: value });
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
+
+      case 'text':
+        setText(value);
+        break;
+
+      default:
+        break;
+    }
+    // setName({ [name]: value });
+    // setText({ [name]: value });
     console.log(value);
   };
 
-  handleSubmit = e => {
+  const handleSubmit = e => {
     console.log(e);
     e.preventDefault();
 
-    if (this.state.name.trim() === '') {
+    if (name.trim() === '') {
       //   alert('Введите имя');
       toast.warn('Введите имя');
       return;
     }
-    console.log(this.state);
-    this.props.onSubmit(this.state);
-    this.resetText();
+    console.log(name, text);
+    onSubmit(name, text);
+    resetText();
   };
 
-  resetText = () => {
-    this.setState({ text: '' });
+  const resetText = () => {
+    setText('');
   };
 
-  render() {
-    return (
-      <form className={s.FeedbackForm} onSubmit={e => this.handleSubmit(e)}>
-        <label>
-          <input
-            type="text"
-            name="name"
-            placeholder="Введите ваше имя"
-            value={this.state.name}
-            onChange={this.handleChange}
-            // className={s.FeedbackForm__textarea}
-          />
-        </label>
-        <textarea
+  return (
+    <form className={s.FeedbackForm} onSubmit={e => handleSubmit(e)}>
+      <label>
+        <input
           type="text"
-          name="text"
-          value={this.state.text}
-          onChange={this.handleChange}
-          className={s.FeedbackForm__textarea}
-        ></textarea>
-        <button type="submit" className={s.FeedbackForm__button}>
-          Отправить
-        </button>
-      </form>
-    );
-  }
+          name="name"
+          placeholder="Введите ваше имя"
+          value={name}
+          onChange={handleChange}
+          // className={s.FeedbackForm__textarea}
+        />
+      </label>
+      <textarea
+        type="text"
+        name="text"
+        value={text}
+        onChange={handleChange}
+        className={s.FeedbackForm__textarea}
+      ></textarea>
+      <button type="submit" className={s.FeedbackForm__button}>
+        Отправить
+      </button>
+    </form>
+  );
 }
 
 export default FeedbackForm;
