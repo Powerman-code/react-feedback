@@ -13,15 +13,10 @@ import './App.css';
 
 function App() {
   const [feedbacks, setFeedbacks] = useState([]);
+  const [feedback, setFeedback] = useState({});
   const [filter, setFilter] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  // state = {
-  //   feedbacks: null,
-  //   filter: '',
-  //   loading: false,
-  //   error: null,
-  // };
 
   useEffect(() => {
     setLoading(true);
@@ -30,7 +25,7 @@ function App() {
       feedbackAPI().then(({ data }) => {
         if (data) {
           console.log(data);
-          setFeedbacks(data);
+          setFeedbacks(data.reverse());
           setLoading(false);
         }
       });
@@ -42,7 +37,7 @@ function App() {
     // return () => {
     //   cleanup;
     // };
-  }, []);
+  }, [feedback]);
 
   // async componentDidMount() {
   //   this.setState({ loading: true });
@@ -83,14 +78,14 @@ function App() {
     };
 
     console.log(feedback);
-
-    // const response = axios.post('http://localhost:8080/api/feedback', feedback);
+    setFeedback(feedback);
+    const response = axios.post('http://localhost:8080/api/feedback', feedback);
 
     // setFeedbacks(({ feedbacks }) => ({
     //   feedbacks: [feedback, ...feedbacks],
     // }));
     // setImages(prevState => [...prevState, ...hits]);
-    setFeedbacks(prevState => [...prevState, feedback]);
+    // setFeedbacks(prevState => [...prevState, feedback]);
   };
 
   const handleFilter = e => {
@@ -103,12 +98,12 @@ function App() {
     // console.log(feedbacks);
     const normalizedFilter = filter.toLowerCase();
 
-    // if (feedbacks) {
-    //   console.log('Ура');
-    //   return feedbacks.filter(feedback =>
-    //     feedback.text.toLowerCase().includes(normalizedFilter),
-    //   );
-    // }
+    if (feedbacks) {
+      console.log('Ура');
+      return feedbacks.filter(feedback =>
+        feedback.name.toLowerCase().includes(normalizedFilter),
+      );
+    }
   };
 
   const visibleFeedbacks = getVisibleFeedbacks();
