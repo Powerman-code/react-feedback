@@ -74,27 +74,7 @@ function FeedbackForm({ onSubmit }) {
       console.log(e);
       e.preventDefault();
 
-      // if (name.trim() === '') {
-      //   //   alert('Введите имя');
-      //   toast.warn('Введите имя');
-      //   return;
-      // }
-
-      // console.log(name.test());
-      // if (!name.test(/^[a-z0-9_-]{3,16}$/)) {
-      //   return;
-      // }
-
-      // if (name !== /^[a-z0-9_-]{3,16}$/) {
-      //   alert(
-      //     'Поле "имя" должно содержать буквы латинского алфавита от A до Z и числа от 0 до 9. Длинна имени должна быть от 1 до 16 символов',
-      //   );
-      //   return;
-      // }
-
       validateForm();
-      // const re = /^[a-z0-9_-]{3,16}$/;
-      // testinput(name);
       console.log(name, text);
       // onSubmit(name, text);
       // resetText();
@@ -102,51 +82,29 @@ function FeedbackForm({ onSubmit }) {
     [name, text, validateForm],
   );
 
-  useEffect(() => {
-    window.addEventListener('keydown', e => {
-      console.log(e);
+  // useEffect(() => {
+  window.addEventListener('keydown', e => {
+    console.log(e);
 
-      if (e.ctrlKey && e.code === 'Enter') {
-        console.log('win');
+    if (e.ctrlKey && e.code === 'Enter') {
+      console.log('win');
 
-        handleSubmit(e);
-      }
-    });
-  }, [handleSubmit]);
+      handleSubmit(e);
+    }
+  });
+  // }, [handleSubmit]);
 
-  // const validateMessage = () => {
-  //   if (text.trim() === '') {
-  //     //   alert('Введите имя');
-  //     toast.warn('Введите сообщение');
-  //     return;
-  //   }
-  // }
+  // useEffect(() => {
+  //   window.addEventListener('keydown', e => {
+  //     console.log(e);
 
-  // function testinput(str) {
-  //   console.log(str, 'TECT СРАБОТАЛ');
-  //   let midstring;
-  // const validationErrorMassage =
-  //   'Поле "Имя" должно содержать буквы латинского алфавита от A до Z и числа от 0 до 9. Длинна имени должна быть от 1 до 16 символов';
+  //     if (e.ctrlKey && e.code === 'Enter') {
+  //       console.log('win');
 
-  // const re = /^[a-z0-9_-]{3,16}$/;
-  //   if (re.test(str)) {
-  //     midstring = ' содержит ';
-  //     return;
-  //   } else {
-  //     midstring = ' не содержит ';
-  //   }
-  //   console.log(str + midstring);
-  // }
-
-  // function testinput(re, str) {
-  //   let midstring;
-  //   if (re.test(str)) {
-  //     midstring = ' содержит ';
-  //   } else {
-  //     midstring = ' не содержит ';
-  //   }
-  //   console.log(str + midstring + re.source);
-  // }
+  //       handleSubmit(e);
+  //     }
+  //   });
+  // }, [handleSubmit]);
 
   const resetText = () => {
     setText('');

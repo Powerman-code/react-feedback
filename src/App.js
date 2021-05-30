@@ -79,7 +79,7 @@ function App() {
 
     console.log(feedback);
     setFeedback(feedback);
-    const response = axios.post('http://localhost:8080/api/feedback', feedback);
+    // const response = axios.post('http://localhost:8080/api/feedback', feedback);
 
     // setFeedbacks(({ feedbacks }) => ({
     //   feedbacks: [feedback, ...feedbacks],
