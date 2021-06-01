@@ -1,134 +1,102 @@
+import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import s from './FeedbackForm.module.css';
 
-function FeedbackForm({ onSubmit }) {
-  const [name, setName] = useState('');
-  const [text, setText] = useState('');
+const TEMP_MESSAGE_URL = 'http://localhost:8080/api/tempMessage';
 
-  // componentDidMount() {
-  //   console.log('C_DID_MOUNT');
+function FeedbackForm() {
+  const [feedback, setFeedback] = useState({ name: '', text: '' });
+  const [feedbacks, setFeedbacks] = useState([]);
+  // const [filter, setFilter] = useState(''); //в imageView
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // window.addEventListener('keydown', e => {
-  //   console.log(e);
+  const fetchMessage = () => {
+    return axios.get(TEMP_MESSAGE_URL).then(({ data }) => data.data);
+  };
 
-  //   if (e.ctrlKey && e.code === 'Enter') {
-  //     console.log('win');
-
-  //     this.handleSubmit(e);
-  //   }
-  // });
-  // }
+  useEffect(() => {
+    if (localStorage.getItem('feedback')) {
+      setFeedback(JSON.parse(localStorage.getItem('feedback')));
+    }
+    fetchMessage().then(data => {
+      const { message } = data[0];
+      setFeedback({ text: message });
+      // localStorage.setItem('feedback', JSON.stringify(message));
+      // console.log(Object.values(responseMessage.data.message));
+    });
+  }, []);
 
   const handleChange = e => {
     const { name, value } = e.currentTarget;
 
-    switch (name) {
-      case 'name':
-        setName(value);
-        break;
+    setFeedback({ ...feedback, [name]: value });
+    const tempMessage = { message: feedback.text };
+    console.log(tempMessage);
 
-      case 'text':
-        setText(value);
-        break;
-
-      default:
-        break;
-    }
-    // setName({ [name]: value });
-    // setText({ [name]: value });
-    console.log(value);
+    axios.patch(TEMP_MESSAGE_URL, tempMessage);
   };
 
-  const validateForm = useCallback(() => {
-    const nameRe = /^[a-z0-9_-]{3,16}$/;
-    const testRe = /^.{1,300}$/;
-    const nameValidationErrorMassage =
-      'Поле "Имя" должно содержать буквы латинского алфавита от a до z и числа от 0 до 9. Длинна имени должна быть от 3 до 16 символов';
-    const textValidationErrorMassage =
-      'Текстовое поле должно содержать от 1 до 300 символов';
+  useEffect(() => {
+    localStorage.setItem('feedback', JSON.stringify(feedback));
+  }, [feedback]);
 
-    if (name.trim() === '' || text.trim() === '') {
-      //   alert('Введите имя');
-      toast.warn('Введите имя и текст');
-      return;
-    }
-    if (!nameRe.test(name)) {
-      toast.warn(nameValidationErrorMassage);
-      console.log(nameValidationErrorMassage);
-      return;
-    }
-    if (!testRe.test(text)) {
-      toast.warn(textValidationErrorMassage);
-      console.log(textValidationErrorMassage);
-      return;
-    }
+  const postData = useCallback(() => {
+    console.log('post', feedback);
+  }, [feedback]);
 
-    onSubmit(name, text);
-    resetText();
-  }, [name, text, onSubmit]);
-
-  const handleSubmit = useCallback(
+  const listener = useCallback(
     e => {
-      console.log(e);
-      e.preventDefault();
+      if (e.ctrlKey && e.code === 'Enter') {
+        postData();
 
-      validateForm();
-      console.log(name, text);
-      // onSubmit(name, text);
-      // resetText();
+        return;
+      }
     },
-    [name, text, validateForm],
+    [postData],
   );
 
-  // useEffect(() => {
-  window.addEventListener('keydown', e => {
-    console.log(e);
+  useEffect(() => {
+    window.addEventListener('keydown', listener);
+    return () => {
+      window.removeEventListener('keydown', listener);
+    };
+  }, [listener]);
 
-    if (e.ctrlKey && e.code === 'Enter') {
-      console.log('win');
+  const onSubmit = e => {
+    e.preventDefault();
 
-      handleSubmit(e);
+    postData();
+  };
+
+  const unEnter = e => {
+    if (e.code === 'Enter') {
+      e.preventDefault();
+      return;
     }
-  });
-  // }, [handleSubmit]);
-
-  // useEffect(() => {
-  //   window.addEventListener('keydown', e => {
-  //     console.log(e);
-
-  //     if (e.ctrlKey && e.code === 'Enter') {
-  //       console.log('win');
-
-  //       handleSubmit(e);
-  //     }
-  //   });
-  // }, [handleSubmit]);
-
-  const resetText = () => {
-    setText('');
   };
 
   return (
-    <form className={s.FeedbackForm} onSubmit={e => handleSubmit(e)}>
+    <form className={s.FeedbackForm} onSubmit={onSubmit} onKeyDown={unEnter}>
       <label>
         <input
           type="text"
           name="name"
           placeholder="Введите ваше имя"
-          value={name}
+          value={feedback.name}
           onChange={handleChange}
-          // className={s.FeedbackForm__textarea}
         />
       </label>
       <textarea
         type="text"
         name="text"
-        value={text}
+        value={feedback.text}
         onChange={handleChange}
         className={s.FeedbackForm__textarea}
-      ></textarea>
+      />
+
       <button type="submit" className={s.FeedbackForm__button}>
         Отправить
       </button>
