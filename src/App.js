@@ -70,23 +70,23 @@ function App() {
   //   }));
   // };
 
-  const addFeedback = (name, text) => {
-    console.log(name, text);
-    const feedback = {
-      name: name.toLowerCase(),
-      text,
-    };
+  // const addFeedback = (name, text) => {
+  //   console.log(name, text);
+  //   const feedback = {
+  //     name: name.toLowerCase(),
+  //     text,
+  //   };
 
-    console.log(feedback);
-    setFeedback(feedback);
-    // const response = axios.post('http://localhost:8080/api/feedback', feedback);
+  //   console.log(feedback);
+  //   setFeedback(feedback);
+  // const response = axios.post('http://localhost:8080/api/feedback', feedback);
 
-    // setFeedbacks(({ feedbacks }) => ({
-    //   feedbacks: [feedback, ...feedbacks],
-    // }));
-    // setImages(prevState => [...prevState, ...hits]);
-    // setFeedbacks(prevState => [...prevState, feedback]);
-  };
+  // setFeedbacks(({ feedbacks }) => ({
+  //   feedbacks: [feedback, ...feedbacks],
+  // }));
+  // setImages(prevState => [...prevState, ...hits]);
+  // setFeedbacks(prevState => [...prevState, feedback]);
+  // };
 
   const handleFilter = e => {
     // console.log(e.currentTarget.value);
@@ -131,7 +131,9 @@ function App() {
       </div>
       <Filter value={filter} onChange={handleFilter} />
       <FeedbackList feedbacks={visibleFeedbacks} />
-      <FeedbackForm onSubmit={addFeedback} />
+      <FeedbackForm
+      // onSubmit={addFeedback}
+      />
       <ToastContainer
         position="top-right"
         autoClose={5000}
