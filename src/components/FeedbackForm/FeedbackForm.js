@@ -7,38 +7,57 @@ import s from './FeedbackForm.module.css';
 
 const TEMP_MESSAGE_URL = 'http://localhost:8080/api/tempMessage';
 
-function FeedbackForm() {
+function FeedbackForm({ handleFeedback }) {
   const [feedback, setFeedback] = useState({ name: '', text: '' });
-  const [feedbacks, setFeedbacks] = useState([]);
-  // const [filter, setFilter] = useState(''); //в imageView
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
-  const fetchMessage = () => {
-    return axios.get(TEMP_MESSAGE_URL).then(({ data }) => data.data);
+  // const [filter, setFilter] = useState(''); //в imageView
+  // const [error, setError] = useState(null);
+
+  const fetchMessage = async () => {
+    try {
+      const { data } = await axios.get(TEMP_MESSAGE_URL);
+      return data.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const sendFeedback = async feedback => {
+    try {
+      const { data } = await axios.post(
+        'http://localhost:8080/api/feedback',
+        feedback,
+      );
+      return data.data;
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
     if (localStorage.getItem('feedback')) {
       setFeedback(JSON.parse(localStorage.getItem('feedback')));
     }
-    fetchMessage().then(data => {
+    const writeMessageToState = async function () {
+      const data = await fetchMessage();
       const { message } = data[0];
+      console.log(message);
       setFeedback({ ...feedback, text: message });
-      // localStorage.setItem('feedback', JSON.stringify(message));
-      // console.log(Object.values(responseMessage.data.message));
-    });
+    };
+    writeMessageToState();
   }, []);
 
   const handleChange = e => {
     const { name, value } = e.currentTarget;
-
     setFeedback({ ...feedback, [name]: value });
+  };
+
+  useEffect(() => {
     const tempMessage = { message: feedback.text };
     console.log(tempMessage);
 
     axios.patch(TEMP_MESSAGE_URL, tempMessage);
-  };
+  }, [feedback]);
 
   useEffect(() => {
     localStorage.setItem('feedback', JSON.stringify(feedback));
@@ -46,16 +65,18 @@ function FeedbackForm() {
 
   const onSubmit = useCallback(() => {
     console.log('post', feedback);
-    axios.post('http://localhost:8080/api/feedback', feedback);
-  }, [feedback]);
+    sendFeedback(feedback).then(({ feedback }) => {
+      handleFeedback(feedback);
+    });
+  }, [feedback, handleFeedback]);
 
-  const resetText = () => {
+  const resetText = useCallback(() => {
     setFeedback({ ...feedback, text: '' });
     const tempMessage = { message: '' };
     console.log(tempMessage);
 
     axios.patch(TEMP_MESSAGE_URL, tempMessage);
-  };
+  }, [feedback]);
 
   const validateForm = useCallback(() => {
     const { name, text } = feedback;
