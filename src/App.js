@@ -93,7 +93,7 @@ function App() {
 
   return (
     <Container>
-      {error && <h1>{error}</h1>}
+      {error && <p>{error}</p>}
       {loading && <FeedbackPendingView />}
       <div>
         <p>Общее количество отзывов: {feedbacks?.length}</p>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import FeedbackItem from '../FeedbackItem/FeedbackItem';
 import feedbackAPI from '../../services/feedback-api';
@@ -12,7 +12,7 @@ const FeedbackList = ({ feedback, filter }) => {
 
   useEffect(() => {
     try {
-      feedbackAPI().then(({ data }) => {
+      feedbackAPI.fetchFeedbacks().then(({ data }) => {
         if (data) {
           setFeedbacks(data.reverse());
         }
@@ -26,23 +26,27 @@ const FeedbackList = ({ feedback, filter }) => {
     // };
   }, []);
 
-  const getVisibleFeedbacks = () => {
-    const allFeedbacks = () => {
-      if (Object.keys(feedback).length !== 0) {
-        return [feedback, ...feedbacks];
-      }
-      return feedbacks;
-    };
+  const getAllFeedbacks = () => {
+    if (Object.keys(feedback).length !== 0) {
+      console.log('DA');
+      setFeedbacks([feedback, ...feedbacks]);
+    }
+  };
 
+  useEffect(() => {
+    getAllFeedbacks();
+  }, [feedback]);
+
+  const getVisibleFeedbacks = () => {
     const normalizedFilter = filter.toLowerCase();
-    console.log(allFeedbacks());
+    // console.log(getAllFeedbacks());
     if (filter) {
-      return allFeedbacks().filter(el =>
+      return feedbacks.filter(el =>
         el.name.toLowerCase().includes(normalizedFilter),
       );
     }
-    console.log(allFeedbacks());
-    return allFeedbacks();
+
+    return feedbacks;
   };
 
   const visibleFeedbacks = getVisibleFeedbacks();
@@ -50,7 +54,7 @@ const FeedbackList = ({ feedback, filter }) => {
   return (
     <ul className={s.FeedbackList}>
       {visibleFeedbacks.map(({ id, name, text }) => (
-        <li key={id} className={s.FeedbackList__item}>
+        <li key={id} className={s.FeedbackItem}>
           <FeedbackItem name={name} text={text} />
         </li>
       ))}
@@ -59,3 +63,10 @@ const FeedbackList = ({ feedback, filter }) => {
 };
 
 export default FeedbackList;
+
+// const getAllFeedbacks = () => {
+//   if (Object.keys(feedback).length !== 0) {
+//     return [feedback, ...feedbacks];
+//   }
+//   return feedbacks;
+// };

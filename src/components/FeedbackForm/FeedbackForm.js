@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { debounce } from 'lodash';
+import { useDebounce } from 'use-debounce';
+import feedbackAPI from '../../services/feedback-api';
+
 import 'react-toastify/dist/ReactToastify.css';
 import s from './FeedbackForm.module.css';
 
@@ -9,37 +11,17 @@ const TEMP_MESSAGE_URL = 'http://localhost:8080/api/tempMessage';
 
 function FeedbackForm({ handleFeedback }) {
   const [feedback, setFeedback] = useState({ name: '', text: '' });
+  const [debouncedText] = useDebounce(feedback.text, 1000);
 
   // const [filter, setFilter] = useState(''); //в imageView
   // const [error, setError] = useState(null);
-
-  const fetchMessage = async () => {
-    try {
-      const { data } = await axios.get(TEMP_MESSAGE_URL);
-      return data.data;
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const sendFeedback = async feedback => {
-    try {
-      const { data } = await axios.post(
-        'http://localhost:8080/api/feedback',
-        feedback,
-      );
-      return data.data;
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   useEffect(() => {
     if (localStorage.getItem('feedback')) {
       setFeedback(JSON.parse(localStorage.getItem('feedback')));
     }
     const writeMessageToState = async function () {
-      const data = await fetchMessage();
+      const data = await feedbackAPI.fetchMessage();
       const { message } = data[0];
       console.log(message);
       setFeedback({ ...feedback, text: message });
@@ -53,11 +35,11 @@ function FeedbackForm({ handleFeedback }) {
   };
 
   useEffect(() => {
-    const tempMessage = { message: feedback.text };
+    const tempMessage = { message: debouncedText };
     console.log(tempMessage);
 
     axios.patch(TEMP_MESSAGE_URL, tempMessage);
-  }, [feedback]);
+  }, [debouncedText]);
 
   useEffect(() => {
     localStorage.setItem('feedback', JSON.stringify(feedback));
@@ -65,7 +47,7 @@ function FeedbackForm({ handleFeedback }) {
 
   const onSubmit = useCallback(() => {
     console.log('post', feedback);
-    sendFeedback(feedback).then(({ feedback }) => {
+    feedbackAPI.sendFeedback(feedback).then(({ feedback }) => {
       handleFeedback(feedback);
     });
   }, [feedback, handleFeedback]);
@@ -119,7 +101,6 @@ function FeedbackForm({ handleFeedback }) {
   const listener = useCallback(
     e => {
       if (e.ctrlKey && e.code === 'Enter') {
-        // onSubmit();
         validateForm();
         return;
       }
@@ -137,7 +118,6 @@ function FeedbackForm({ handleFeedback }) {
   const handleSubmit = e => {
     e.preventDefault();
 
-    // onSubmit();
     validateForm();
   };
 
@@ -150,9 +130,9 @@ function FeedbackForm({ handleFeedback }) {
 
   return (
     <form
-      className={s.FeedbackForm}
       onSubmit={handleSubmit}
       onKeyDown={unEnter}
+      className={s.FeedbackForm}
     >
       <label>
         <input
@@ -161,6 +141,7 @@ function FeedbackForm({ handleFeedback }) {
           placeholder="Введите ваше имя"
           value={feedback.name}
           onChange={handleChange}
+          className={s.FeedbackForm__input}
         />
       </label>
       <textarea
@@ -170,6 +151,9 @@ function FeedbackForm({ handleFeedback }) {
         onChange={handleChange}
         className={s.FeedbackForm__textarea}
       />
+      <p className={s.FeedbackForm__count}>
+        Осталось символов: {300 - feedback.text.length}
+      </p>
 
       <button type="submit" className={s.FeedbackForm__button}>
         Отправить

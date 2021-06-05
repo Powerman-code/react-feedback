@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const BASE_URL = 'http://localhost:8080/api/feedback';
+const TEMP_MESSAGE_URL = 'http://localhost:8080/api/tempMessage';
 
 async function fetchFeedbacks() {
   try {
@@ -20,12 +21,32 @@ async function fetchFeedbacks() {
   }
 }
 
-// const api = {
-//   fetchFeedbacks,
-// };
+const fetchMessage = async () => {
+  try {
+    const { data } = await axios.get(TEMP_MESSAGE_URL);
+    return data.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
 
-// export default api;
-export default fetchFeedbacks;
+const sendFeedback = async feedback => {
+  try {
+    const { data } = await axios.post(BASE_URL, feedback);
+    return data.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const api = {
+  fetchFeedbacks,
+  fetchMessage,
+  sendFeedback,
+};
+
+export default api;
+// export default fetchFeedbacks;
 
 // if (response.status === 200) {
 //   console.log('Ура, мы тут');
