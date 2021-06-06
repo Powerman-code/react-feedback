@@ -1,20 +1,21 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
+require('dotenv').config();
 
-const BASE_URL = 'http://localhost:8080/api/feedback';
-const TEMP_MESSAGE_URL = 'http://localhost:8080/api/tempMessage';
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+const TEMP_MESSAGE_URL = process.env.REACT_APP_TEMP_MESSAGE_URL;
+
+const successMessage = 'Сообщение успешно добавлено';
+const errorMessage = 'Произошла ошибка. Сообщение не добавлено';
 
 async function fetchFeedbacks() {
   try {
-    const response = await axios('http://localhost:8080/api/feedback');
-    console.log(response);
+    const response = await axios(BASE_URL);
 
     if (response.status === 200) {
-      console.log('OK');
       const { data } = response;
-      console.log(data);
       return data;
     }
-    console.log('Не Ок');
     return await Promise.reject(new Error('Неверный запрос'));
   } catch (error) {
     return error;
@@ -27,15 +28,21 @@ const fetchMessage = async () => {
     return data.data;
   } catch (error) {
     console.error(error);
+    return error;
   }
 };
 
 const sendFeedback = async feedback => {
   try {
     const { data } = await axios.post(BASE_URL, feedback);
-    return data.data;
+    if ((data.code = 201)) {
+      console.log('code 201');
+      toast.success(successMessage);
+      return data.data;
+    }
   } catch (error) {
-    console.error(error);
+    toast.error(errorMessage);
+    throw error;
   }
 };
 

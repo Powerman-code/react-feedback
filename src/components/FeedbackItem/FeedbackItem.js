@@ -1,5 +1,5 @@
 import React from 'react';
-import s from './FeedbackItem.module.css';
+import s from './FeedbackItem.module.scss';
 
 const FeedbackItem = ({ name, text }) => (
   <>

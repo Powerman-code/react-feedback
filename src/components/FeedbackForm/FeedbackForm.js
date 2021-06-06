@@ -5,16 +5,15 @@ import { useDebounce } from 'use-debounce';
 import feedbackAPI from '../../services/feedback-api';
 
 import 'react-toastify/dist/ReactToastify.css';
-import s from './FeedbackForm.module.css';
+import s from './FeedbackForm.module.scss';
 
 const TEMP_MESSAGE_URL = 'http://localhost:8080/api/tempMessage';
 
 function FeedbackForm({ handleFeedback }) {
   const [feedback, setFeedback] = useState({ name: '', text: '' });
   const [debouncedText] = useDebounce(feedback.text, 1000);
-
-  // const [filter, setFilter] = useState(''); //в imageView
-  // const [error, setError] = useState(null);
+  const [validationNameError, setValidationNameError] = useState(null);
+  const [validationTextError, setValidationTextError] = useState(null);
 
   useEffect(() => {
     if (localStorage.getItem('feedback')) {
@@ -32,6 +31,8 @@ function FeedbackForm({ handleFeedback }) {
   const handleChange = e => {
     const { name, value } = e.currentTarget;
     setFeedback({ ...feedback, [name]: value });
+    setValidationNameError(null);
+    setValidationTextError(null);
   };
 
   useEffect(() => {
@@ -45,11 +46,22 @@ function FeedbackForm({ handleFeedback }) {
     localStorage.setItem('feedback', JSON.stringify(feedback));
   }, [feedback]);
 
-  const onSubmit = useCallback(() => {
-    console.log('post', feedback);
-    feedbackAPI.sendFeedback(feedback).then(({ feedback }) => {
-      handleFeedback(feedback);
-    });
+  const onSubmit = useCallback(async () => {
+    try {
+      const { feedback: returnedFeedback } = await feedbackAPI.sendFeedback(
+        feedback,
+      );
+      console.log(returnedFeedback);
+      handleFeedback(returnedFeedback);
+    } catch (error) {
+      console.error(error);
+    }
+    // feedbackAPI
+    //   .sendFeedback(feedback)
+    //   .then(({ feedback }) => {
+    //     handleFeedback(feedback);
+    //   })
+    //   .catch(error => console.error(error));
   }, [feedback, handleFeedback]);
 
   const resetText = useCallback(() => {
@@ -73,11 +85,27 @@ function FeedbackForm({ handleFeedback }) {
     const textValidationLinkForbiddenMassage =
       'В сообщении запрещено использовать ссылки';
     console.log(name, text);
-    if (name.trim() === '' || text.trim() === '') {
+    // if (name.trim() === '' || text.trim() === '') {
+    //   //   alert('Введите имя');
+    //   // toast.warn('Введите имя и текст');
+    //   setValidationError('')
+    //   return;
+    // }
+
+    if (name.trim() === '') {
       //   alert('Введите имя');
-      toast.warn('Введите имя и текст');
+      // toast.warn('Введите имя');
+      setValidationNameError('Введите имя');
       return;
     }
+
+    if (text.trim() === '') {
+      //   alert('Введите имя');
+      // toast.warn('Введите текст');
+      setValidationTextError('Введите текст');
+      return;
+    }
+
     if (!nameRe.test(name)) {
       toast.warn(nameValidationErrorMassage);
       console.log(nameValidationErrorMassage);
@@ -136,6 +164,7 @@ function FeedbackForm({ handleFeedback }) {
     >
       <label>
         <input
+          autoComplete="off"
           type="text"
           name="name"
           placeholder="Введите ваше имя"
@@ -144,6 +173,10 @@ function FeedbackForm({ handleFeedback }) {
           className={s.FeedbackForm__input}
         />
       </label>
+      <span className={s.FeedbackForm__inputError}>{validationNameError}</span>
+      <span className={s.FeedbackForm__textareaError}>
+        {validationTextError}
+      </span>
       <textarea
         type="text"
         name="text"

@@ -1,0 +1,28 @@
+.FeedbackItem__block {
+}
+
+.FeedbackItem__name {
+}
+
+.FeedbackItem__body {
+  display: block;
+  padding: 15px 10px;
+  margin-top: 10px;
+  border: 2px solid honeydew;
+  border-radius: 4px;
+}
+
+.FeedbackItem__name__text {
+  display: block;
+
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.FeedbackItem__body__text {
+  display: block;
+  word-wrap: break-word;
+  font-size: 14px;
+  letter-spacing: 0.03em;
+}

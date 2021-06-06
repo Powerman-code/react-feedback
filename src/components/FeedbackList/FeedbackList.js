@@ -3,12 +3,12 @@ import React, { useCallback, useEffect, useState } from 'react';
 import FeedbackItem from '../FeedbackItem/FeedbackItem';
 import feedbackAPI from '../../services/feedback-api';
 
-import s from './FeedbackList.module.css';
+import s from './FeedbackList.module.scss';
 
 const FeedbackList = ({ feedback, filter }) => {
   const [feedbacks, setFeedbacks] = useState([]);
   const [error, setError] = useState(null);
-  console.log(feedback);
+  // console.log(feedback);
 
   useEffect(() => {
     try {
@@ -27,7 +27,7 @@ const FeedbackList = ({ feedback, filter }) => {
   }, []);
 
   const getAllFeedbacks = () => {
-    if (Object.keys(feedback).length !== 0) {
+    if (feedback && Object.keys(feedback).length !== 0) {
       console.log('DA');
       setFeedbacks([feedback, ...feedbacks]);
     }
