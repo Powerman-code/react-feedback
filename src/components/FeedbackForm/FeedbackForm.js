@@ -107,21 +107,24 @@ function FeedbackForm({ handleFeedback }) {
     }
 
     if (!nameRe.test(name)) {
-      toast.warn(nameValidationErrorMassage);
-      console.log(nameValidationErrorMassage);
+      // toast.warn(nameValidationErrorMassage);
+      // console.log(nameValidationErrorMassage);
+      setValidationTextError(nameValidationErrorMassage);
       return;
     }
     if (!testRe.test(text)) {
-      toast.warn(textValidationErrorMassage);
-      console.log(textValidationErrorMassage);
+      // toast.warn(textValidationErrorMassage);
+      // console.log(textValidationErrorMassage);
+      setValidationTextError(textValidationErrorMassage);
       return;
     }
     if (testLinkRe.test(text)) {
-      console.log(textValidationErrorMassage);
-      toast.warn(textValidationLinkForbiddenMassage);
-
+      // console.log(textValidationErrorMassage);
+      // toast.warn(textValidationLinkForbiddenMassage);
+      setValidationTextError(textValidationLinkForbiddenMassage);
       return;
     }
+
     onSubmit();
     resetText();
   }, [onSubmit, resetText, feedback]);
@@ -173,10 +176,17 @@ function FeedbackForm({ handleFeedback }) {
           className={s.FeedbackForm__input}
         />
       </label>
-      <span className={s.FeedbackForm__inputError}>{validationNameError}</span>
-      <span className={s.FeedbackForm__textareaError}>
-        {validationTextError}
-      </span>
+
+      {(validationNameError || validationTextError) && (
+        <div className={s.FeedbackForm__ErrorBlock}>
+          <span className={s.FeedbackForm__inputError}>
+            {validationNameError}
+          </span>
+          <span className={s.FeedbackForm__textareaError}>
+            {validationTextError}
+          </span>
+        </div>
+      )}
       <textarea
         type="text"
         name="text"
@@ -184,6 +194,7 @@ function FeedbackForm({ handleFeedback }) {
         onChange={handleChange}
         className={s.FeedbackForm__textarea}
       />
+
       <p className={s.FeedbackForm__count}>
         Осталось символов: {300 - feedback.text.length}
       </p>
