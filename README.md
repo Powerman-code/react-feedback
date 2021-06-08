@@ -1,70 +1,86 @@
-# Getting Started with Create React App
+# Приложение Feedback Сервер
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Краткое описание:
 
-## Available Scripts
+**_Сервер:_** Хранение имени и сообщения автора отзыва, валидация данных, а
+также хранение текста сообщения до сохранения отзыва в базе.
 
-In the project directory, you can run:
+> Технологии: NodeJs, Express, LowDb
 
-### `npm start`
+**_Клиент:_** Приложение для отправки отзыва и сохранения его на сервере.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+> Технологии: HTML, CSS/SCSS, JS, REACT
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Реализовано:
 
-### `npm test`
+**_Сервер:_**
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- код структурирован
+- используется база данных (lowDb)
+- обрабатываются ошибки
+- при добавлении сообщения сервер возвращает статус и новое сообщение
+- входящие данные валидируются
 
-### `npm run build`
+**_Клиент:_**
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- использован CSS/SASS для оформления
+- адаптивная верстка
+- при наведении и других событиях элементы приложения не смещаются
+- JS валидация формы и уведомления об ошибках
+- нельзя отправить визуально пустые поля
+- нельзя отправить поле имя с недопустимыми символами (допустимо: латинские
+  буквы, цифры, знак нижнего подчеркивания)
+- есть уведомление о том, какая в каком поле ошибка
+- уведомление об ошибке скрывается при начале ввода в соответствующее поле
+  (рендер по условию)
+- уведомления об ошибках при появлении не сдвигают другие поля
+- использованы регулярные выражения в валидации
+- обработаны ответы сервера (сообщение добавлено, не добавлено...)
+- отсутствуют лишние перерендеры
+- использованы хуки useState, useCallback и прочие
+- после отправки формы очищается поле текст сообщения
+- после отправки формы не очищается поле автор сообщения
+- использованы переменные окружения
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Функционал:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- структура формы отправки сообщения: имя, текст, кнопка
+- сообщение отправляется по клику на кнопку и по Ctrl+Enter
+- новое сообщение добавляется без перезагрузки страницы
+- новое сообщение добавляется в начало (вверх) списка сообщений
+- сообщения отсортированы по убыванию даты (новые вверху)
+- новое сообщение содержит имя отправителя и текст
+- после принудительной перезагрузки страницы сообщение не исчезает, не
+  перемещается
+- при заходе на страницу из другого браузера сообщение остается на месте
+  (хранение данных на сервере)
+- добавлен фильтр(поиск) отзывов по имени
 
-### `npm run eject`
+## Ссылки на рабочую версию:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+**_Сервер:_** [ссылка на сервер](http://example.com/ 'Необязательная подсказка')
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+**_Клиент:_**
+[ссылка на клиент](https://github.com/Powerman-code/react-feedback 'Необязательная подсказка')
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Инструкция по запуску:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+**_Сервер:_**
 
-## Learn More
+- Форкнуть или скачать приложение
+- Прописать в терминале
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+      npm i
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- После установки нод модулей прописать в терминале
 
-### Code Splitting
+      npm run start:dev
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+**_Клиент:_**
 
-### Analyzing the Bundle Size
+- Форкнуть или скачать приложение
+- Прописать в терминале
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+      npm i
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- После установки нод модулей прописать в терминале “npm start ”
