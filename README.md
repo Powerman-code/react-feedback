@@ -58,10 +58,11 @@
 
 ## Ссылки на рабочую версию:
 
-**_Сервер:_** [ссылка на сервер](http://example.com/ 'Необязательная подсказка')
+**_Сервер:_**
+[ссылка на сервер](https://github.com/Powerman-code/feedbackServer)
 
 **_Клиент:_**
-[ссылка на клиент](https://github.com/Powerman-code/react-feedback 'Необязательная подсказка')
+[ссылка на клиент](https://github.com/Powerman-code/react-feedback)
 
 ## Инструкция по запуску:
 
