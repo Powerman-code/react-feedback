@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
 import { useDebounce } from 'use-debounce';
 import feedbackAPI from '../../services/feedback-api';
 
@@ -22,7 +21,6 @@ function FeedbackForm({ handleFeedback }) {
     const writeMessageToState = async function () {
       const data = await feedbackAPI.fetchMessage();
       const { message } = data[0];
-      console.log(message);
       setFeedback({ ...feedback, text: message });
     };
     writeMessageToState();
@@ -37,7 +35,6 @@ function FeedbackForm({ handleFeedback }) {
 
   useEffect(() => {
     const tempMessage = { message: debouncedText };
-    console.log(tempMessage);
 
     axios.patch(TEMP_MESSAGE_URL, tempMessage);
   }, [debouncedText]);
@@ -51,23 +48,15 @@ function FeedbackForm({ handleFeedback }) {
       const { feedback: returnedFeedback } = await feedbackAPI.sendFeedback(
         feedback,
       );
-      console.log(returnedFeedback);
       handleFeedback(returnedFeedback);
     } catch (error) {
       console.error(error);
     }
-    // feedbackAPI
-    //   .sendFeedback(feedback)
-    //   .then(({ feedback }) => {
-    //     handleFeedback(feedback);
-    //   })
-    //   .catch(error => console.error(error));
   }, [feedback, handleFeedback]);
 
   const resetText = useCallback(() => {
     setFeedback({ ...feedback, text: '' });
     const tempMessage = { message: '' };
-    console.log(tempMessage);
 
     axios.patch(TEMP_MESSAGE_URL, tempMessage);
   }, [feedback]);
@@ -84,43 +73,26 @@ function FeedbackForm({ handleFeedback }) {
       'Текстовое поле должно содержать от 1 до 300 символов';
     const textValidationLinkForbiddenMassage =
       'В сообщении запрещено использовать ссылки';
-    console.log(name, text);
-    // if (name.trim() === '' || text.trim() === '') {
-    //   //   alert('Введите имя');
-    //   // toast.warn('Введите имя и текст');
-    //   setValidationError('')
-    //   return;
-    // }
 
     if (name.trim() === '') {
-      //   alert('Введите имя');
-      // toast.warn('Введите имя');
       setValidationNameError('Введите имя');
       return;
     }
 
     if (text.trim() === '') {
-      //   alert('Введите имя');
-      // toast.warn('Введите текст');
       setValidationTextError('Введите текст');
       return;
     }
 
     if (!nameRe.test(name)) {
-      // toast.warn(nameValidationErrorMassage);
-      // console.log(nameValidationErrorMassage);
       setValidationTextError(nameValidationErrorMassage);
       return;
     }
     if (!testRe.test(text)) {
-      // toast.warn(textValidationErrorMassage);
-      // console.log(textValidationErrorMassage);
       setValidationTextError(textValidationErrorMassage);
       return;
     }
     if (testLinkRe.test(text)) {
-      // console.log(textValidationErrorMassage);
-      // toast.warn(textValidationLinkForbiddenMassage);
       setValidationTextError(textValidationLinkForbiddenMassage);
       return;
     }

@@ -27,7 +27,6 @@ const fetchMessage = async () => {
     const { data } = await axios.get(TEMP_MESSAGE_URL);
     return data.data;
   } catch (error) {
-    console.error(error);
     return error;
   }
 };
@@ -36,7 +35,6 @@ const sendFeedback = async feedback => {
   try {
     const { data } = await axios.post(BASE_URL, feedback);
     if ((data.code = 201)) {
-      console.log('code 201');
       toast.success(successMessage);
       return data.data;
     }
@@ -53,15 +51,3 @@ const api = {
 };
 
 export default api;
-// export default fetchFeedbacks;
-
-// if (response.status === 200) {
-//   console.log('Ура, мы тут');
-
-//   const data = await response.json();
-//   console.log(response);
-//   // return this.setState({ feedbacks: data });
-//   return data;
-// }
-// console.log('нет, мы тут');
-// return await Promise.reject(new Error('Неверный запрос'));

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import FeedbackItem from '../FeedbackItem/FeedbackItem';
 import feedbackAPI from '../../services/feedback-api';
@@ -8,7 +8,6 @@ import s from './FeedbackList.module.scss';
 const FeedbackList = ({ feedback, filter }) => {
   const [feedbacks, setFeedbacks] = useState([]);
   const [error, setError] = useState(null);
-  // console.log(feedback);
 
   useEffect(() => {
     try {
@@ -18,17 +17,12 @@ const FeedbackList = ({ feedback, filter }) => {
         }
       });
     } catch (error) {
-      console.log(typeof error.message);
       setError(error.message);
     }
-    // return () => {
-    //   cleanup;
-    // };
   }, []);
 
   const getAllFeedbacks = () => {
     if (feedback && Object.keys(feedback).length !== 0) {
-      console.log('DA');
       setFeedbacks([feedback, ...feedbacks]);
     }
   };
@@ -39,7 +33,6 @@ const FeedbackList = ({ feedback, filter }) => {
 
   const getVisibleFeedbacks = () => {
     const normalizedFilter = filter.toLowerCase();
-    // console.log(getAllFeedbacks());
     if (filter) {
       return feedbacks.filter(el =>
         el.name.toLowerCase().includes(normalizedFilter),
@@ -63,10 +56,3 @@ const FeedbackList = ({ feedback, filter }) => {
 };
 
 export default FeedbackList;
-
-// const getAllFeedbacks = () => {
-//   if (Object.keys(feedback).length !== 0) {
-//     return [feedback, ...feedbacks];
-//   }
-//   return feedbacks;
-// };
