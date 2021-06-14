@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 import FeedbackItem from '../FeedbackItem/FeedbackItem';
 import feedbackAPI from '../../services/feedback-api';
@@ -7,6 +7,7 @@ import s from './FeedbackList.module.scss';
 
 const FeedbackList = ({ feedback, filter }) => {
   const [feedbacks, setFeedbacks] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -21,14 +22,15 @@ const FeedbackList = ({ feedback, filter }) => {
     }
   }, []);
 
-  const getAllFeedbacks = () => {
+  const getAllFeedbacks = useCallback(() => {
     if (feedback && Object.keys(feedback).length !== 0) {
       setFeedbacks([feedback, ...feedbacks]);
     }
-  };
+  }, [feedback, feedbacks]);
 
   useEffect(() => {
     getAllFeedbacks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [feedback]);
 
   const getVisibleFeedbacks = () => {

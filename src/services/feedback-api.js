@@ -31,6 +31,18 @@ const fetchMessage = async () => {
   }
 };
 
+const sendMessage = async tempMessage => {
+  try {
+    const { data } = await axios.patch(TEMP_MESSAGE_URL, tempMessage);
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+    toast.error(errorMessage);
+    throw error;
+  }
+};
+
 const sendFeedback = async feedback => {
   try {
     const { data } = await axios.post(BASE_URL, feedback);
@@ -48,6 +60,7 @@ const api = {
   fetchFeedbacks,
   fetchMessage,
   sendFeedback,
+  sendMessage,
 };
 
 export default api;

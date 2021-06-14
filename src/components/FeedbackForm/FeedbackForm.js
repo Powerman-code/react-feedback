@@ -1,12 +1,9 @@
-import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import feedbackAPI from '../../services/feedback-api';
 
 import 'react-toastify/dist/ReactToastify.css';
 import s from './FeedbackForm.module.scss';
-
-const TEMP_MESSAGE_URL = 'http://localhost:8080/api/tempMessage';
 
 function FeedbackForm({ handleFeedback }) {
   const [feedback, setFeedback] = useState({ name: '', text: '' });
@@ -24,6 +21,7 @@ function FeedbackForm({ handleFeedback }) {
       setFeedback({ ...feedback, text: message });
     };
     writeMessageToState();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = e => {
@@ -36,7 +34,7 @@ function FeedbackForm({ handleFeedback }) {
   useEffect(() => {
     const tempMessage = { message: debouncedText };
 
-    axios.patch(TEMP_MESSAGE_URL, tempMessage);
+    feedbackAPI.sendMessage(tempMessage);
   }, [debouncedText]);
 
   useEffect(() => {
@@ -54,11 +52,15 @@ function FeedbackForm({ handleFeedback }) {
     }
   }, [feedback, handleFeedback]);
 
-  const resetText = useCallback(() => {
+  const resetText = useCallback(async () => {
     setFeedback({ ...feedback, text: '' });
     const tempMessage = { message: '' };
 
-    axios.patch(TEMP_MESSAGE_URL, tempMessage);
+    try {
+      await feedbackAPI.sendMessage(tempMessage);
+    } catch (error) {
+      console.error(error);
+    }
   }, [feedback]);
 
   const validateForm = useCallback(() => {
@@ -66,7 +68,7 @@ function FeedbackForm({ handleFeedback }) {
     const nameRe = /^[a-z0-9_-]{3,16}$/;
     const testRe = /^.{1,300}$/;
     const testLinkRe =
-      /^((ftp|http|https):\/\/)?(www\.)?([A-Za-zА-Яа-я0-9]{1}[A-Za-zА-Яа-я0-9\-]*\.?)*\.{1}[A-Za-zА-Яа-я0-9-]{2,8}(\/([\w#!:.?+=&%@!\-\/])*)?/;
+      /^((ftp|http|https):\/\/)?(www\.)?([A-Za-zА-Яа-я0-9]{1}[A-Za-zА-Яа-я0-9\\-]*\.?)*\.{1}[A-Za-zА-Яа-я0-9-]{2,8}(\/([\w#!:.?+=&%@!\-\\/])*)?/;
     const nameValidationErrorMassage =
       'Поле "Имя" должно содержать буквы латинского алфавита от a до z и числа от 0 до 9. Длинна имени должна быть от 3 до 16 символов';
     const textValidationErrorMassage =
