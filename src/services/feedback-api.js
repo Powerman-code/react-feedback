@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
-require('dotenv').config();
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
-const TEMP_MESSAGE_URL = process.env.REACT_APP_TEMP_MESSAGE_URL;
+const BASE_URL = 'https://small-feedback-server.herokuapp.com/api/feedback';
+const TEMP_MESSAGE_URL =
+  'https://small-feedback-server.herokuapp.com/api/tempMessage';
 
 const successMessage = 'Сообщение успешно добавлено';
 const errorMessage = 'Произошла ошибка. Сообщение не добавлено';
@@ -34,10 +34,8 @@ const fetchMessage = async () => {
 const sendMessage = async tempMessage => {
   try {
     const { data } = await axios.patch(TEMP_MESSAGE_URL, tempMessage);
-    console.log(data);
     return data;
   } catch (error) {
-    console.log(error);
     toast.error(errorMessage);
     throw error;
   }
